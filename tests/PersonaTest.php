@@ -4,12 +4,12 @@ use Persona\Persona;
 
 class PersonaContainerTest extends PHPUnit_Framework_TestCase
 {
-
     public function setUp()
     {
         parent::setUp();
         Persona::bind(ServiceInterface::class, Service::class);
         Persona::bind(RepositoryInterface::class, Repository::class);
+        Persona::singleton(Singleton::class, Singleton::class);
     }
 
     public function testGetBindList()
@@ -21,7 +21,7 @@ class PersonaContainerTest extends PHPUnit_Framework_TestCase
     public function testGetSingletonList()
     {
         $list = Persona::getSingletonList();
-        $this->assertEquals(count($list), 0);
+        $this->assertEquals(count($list), 1);
     }
 
     public function testMake()
@@ -47,5 +47,20 @@ class PersonaContainerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($item->name, 'Item Name');
         $this->assertEquals($user->name, 'User Name');
         $this->assertEquals($job->job, 'PG');
+    }
+
+    public function testSingleton()
+    {
+        /** @var Singleton $singleton */
+        $singleton = Persona::make(Singleton::class);
+
+        $this->assertEquals($singleton->getCount(), 0);
+
+        $singleton->countUp();
+
+        /** @var Singleton $singleton */
+        $singleton2 = Persona::make(Singleton::class);
+
+        $this->assertEquals($singleton2->getCount(), 1);
     }
 }

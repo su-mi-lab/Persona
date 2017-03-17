@@ -14,4 +14,5 @@ require_once 'TestClass/Domain/Service.php';
 require_once 'TestClass/Infrastructure/Repository.php';
 
 require_once 'TestClass/App/Controller.php';
+require_once 'TestClass/App/Singleton.php';
 

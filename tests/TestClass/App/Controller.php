@@ -10,4 +10,13 @@ class Controller
     {
         return $service->get($order_id);
     }
+
+    /**
+     * @param $id
+     * @return int
+     */
+    public function test($id)
+    {
+        return $id;
+    }
 }
