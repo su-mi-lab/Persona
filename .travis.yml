@@ -8,4 +8,5 @@ before_script:
   - php composer.phar install --dev --prefer-source
 
 script:
-  - php vendor/phpunit/phpunit/phpunit --configuration tests/phpunit.xml tests
+  - mkdir -p build/logs
+  - phpunit --configuration tests/phpunit.xml tests
