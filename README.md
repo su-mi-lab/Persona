@@ -15,4 +15,4 @@ Add this to your composer.json file, in the require object:
 "persona/persona": "{version}"
 ```
 
-[Sample](https://github.com/su-mi-lab/Persona/blob/master/tests/PersonaTest.php)
+[Sample](https://github.com/su-mi-lab/Persona/blob/master/tests/Persona/PersonaTest.php)
