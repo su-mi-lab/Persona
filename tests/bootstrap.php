@@ -2,7 +2,6 @@
 
 require_once __DIR__ . "/../vendor/autoload.php";
 
-
 require_once __DIR__. '/TestClass/Domain/Models/User.php';
 require_once __DIR__. '/TestClass/Domain/Models/UserJob.php';
 require_once __DIR__. '/TestClass/Domain/Models/Item.php';

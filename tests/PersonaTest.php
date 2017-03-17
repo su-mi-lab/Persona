@@ -2,7 +2,7 @@
 
 use Persona\Persona;
 
-class PersonaContainerTest extends PHPUnit_Framework_TestCase
+class PersonaTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {

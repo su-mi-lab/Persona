@@ -5,5 +5,6 @@
 [![Total Downloads](https://poser.pugx.org/persona/persona/downloads)](https://packagist.org/packages/persona/persona)
 [![Code Climate](https://codeclimate.com/github/su-mi-lab/Persona/badges/gpa.svg)](https://codeclimate.com/github/su-mi-lab/Persona)
 
-
 DI
+
+[Sample](https://github.com/su-mi-lab/Persona/blob/master/tests/PersonaTest.php)
