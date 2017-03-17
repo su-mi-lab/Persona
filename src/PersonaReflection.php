@@ -13,7 +13,7 @@ class PersonaReflection
     {
         $args = [];
         if ($reflection->hasMethod('__construct')) {
-            $parameters = $reflection->getMethod('__construct')->getParameters();
+            $parameters = $reflection->getConstructor()->getParameters();
             $args = $this->getArgument($parameters, $interfaceList);
         }
 
@@ -33,6 +33,7 @@ class PersonaReflection
         if ($reflection->hasMethod($method)) {
             $parameters = $reflection->getMethod($method)->getParameters();
             $args = $this->getArgument($parameters, $options);
+
             return $reflection->getMethod($method)->invokeArgs($interface, $args);
         }
 
