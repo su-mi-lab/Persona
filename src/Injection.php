@@ -6,15 +6,15 @@ class Injection
 {
     /**
      * @param \ReflectionClass $reflection
-     * @param $interfaceList
+     * @param $bindParams
      * @return mixed
      */
-    public function newInstance(\ReflectionClass $reflection, $interfaceList)
+    public function newInstance(\ReflectionClass $reflection, array $bindParams)
     {
         $args = [];
         if ($reflection->hasMethod('__construct')) {
             $parameters = $reflection->getConstructor()->getParameters();
-            $args = $this->getArgument($parameters, $interfaceList);
+            $args = $this->getArgument($parameters, $bindParams);
         }
 
         return $reflection->newInstanceArgs($args);
@@ -23,17 +23,17 @@ class Injection
     /**
      * @param $method
      * @param $interface
-     * @param array $options
+     * @param array $bindParams
      * @return mixed|null
      * @throws \ReflectionException
      */
-    public function invoke($method, $interface, array $options)
+    public function invoke($method, $interface, array $bindParams)
     {
         $reflection = new \ReflectionClass(get_class($interface));
 
         if ($reflection->hasMethod($method)) {
             $parameters = $reflection->getMethod($method)->getParameters();
-            $args = $this->getArgument($parameters, $options);
+            $args = $this->getArgument($parameters, $bindParams);
 
             return $reflection->getMethod($method)->invokeArgs($interface, $args);
         }
@@ -43,14 +43,14 @@ class Injection
 
     /**
      * @param $interface
-     * @param array $interfaceList
+     * @param array $bindParams
      * @return \ReflectionClass
      * @throws \ReflectionException
      */
-    public function getReflectionClass($interface, array $interfaceList)
+    public function getReflectionClass($interface, array $bindParams)
     {
-        if (isset($interfaceList[$interface])) {
-            return new \ReflectionClass($interfaceList[$interface]);
+        if (isset($bindParams[$interface])) {
+            return new \ReflectionClass($bindParams[$interface]);
         }
 
         return new \ReflectionClass($interface);

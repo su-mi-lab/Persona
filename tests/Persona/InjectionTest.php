@@ -27,7 +27,7 @@ class InjectionTest extends TestCase
         $id = $persona->invoke('test', $controller, [
             'id' => 4
         ]);
-        
+
         $this->assertEquals($id, 4);
     }
 

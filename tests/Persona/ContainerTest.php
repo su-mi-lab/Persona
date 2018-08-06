@@ -1,6 +1,7 @@
 <?php
 
 use Persona\Container;
+use Persona\Exception\PersonaException;
 use PHPUnit\Framework\TestCase;
 
 class ContainerTest extends TestCase
@@ -10,40 +11,32 @@ class ContainerTest extends TestCase
         parent::setUp();
         Container::bind(ServiceInterface::class, Service::class);
         Container::bind(RepositoryInterface::class, Repository::class);
-        Container::singleton(Singleton::class, Singleton::class);
-    }
-
-    public function testGetBindList()
-    {
-        $list = Container::getBindList();
-        $this->assertEquals(count($list), 2);
-    }
-
-    public function testGetSingletonList()
-    {
-        $list = Container::getSingletonList();
-        $this->assertEquals(count($list), 1);
+        Container::bind(Singleton::class, Singleton::class, true);
     }
 
     /**
-     * @throws ReflectionException
+     * @throws PersonaException
      */
-    public function testMake()
+    public function testGet()
     {
+        $container = new Container();
+
         /** @var Service $serviceInterface */
-        $serviceInterface = Container::make(ServiceInterface::class);
+        $serviceInterface = $container->get(ServiceInterface::class);
         $this->assertEquals($serviceInterface instanceof Service, true);
         $this->assertEquals($serviceInterface->get(1) instanceof Order, true);
     }
 
     /**
-     * @throws ReflectionException
+     * @throws PersonaException
      */
     public function testCall()
     {
+        $container = new Container();
+
         /** @var Order $order */
-        $order = Container::call('indexAction', Controller::class, [
-            'order_id' => 1
+        $order = $container->call(Controller::class, 'indexAction', [
+          'order_id' => 1
         ]);
 
         $item = $order->getItem();
@@ -57,19 +50,21 @@ class ContainerTest extends TestCase
     }
 
     /**
-     * @throws ReflectionException
+     * @throws PersonaException
      */
     public function testSingleton()
     {
+        $container = new Container();
+
         /** @var Singleton $singleton */
-        $singleton = Container::make(Singleton::class);
+        $singleton = $container->get(Singleton::class);
 
         $this->assertEquals($singleton->getCount(), 0);
 
         $singleton->countUp();
 
         /** @var Singleton $singleton */
-        $singleton2 = Container::make(Singleton::class);
+        $singleton2 = $container->get(Singleton::class);
 
         $this->assertEquals($singleton2->getCount(), 1);
     }

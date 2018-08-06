@@ -2,12 +2,19 @@
 
 namespace Persona;
 
+use Persona\Exception\PersonaException;
+
 class Container
 {
     /**
      * @var array
      */
     private static $bindList = [];
+
+    /**
+     * @var array
+     */
+    private static $closureList = [];
 
     /**
      * @var array
@@ -20,84 +27,74 @@ class Container
     private static $singletonObject = [];
 
     /**
-     * @param $interface
      * @param $instance
+     * @param string $method
+     * @param array $params
+     * @return mixed|null
+     * @throws PersonaException
      */
-    public static function bind($interface, $instance): void
+    public function call(string $instance, string $method, array $params = [])
     {
+        try {
+            $obj = $this->get($instance, $params);
+            $persona = new Injection;
+            return $persona->invoke($method, $obj, self::getInterfaceList($params));
+        } catch (\Exception $e) {
+            throw new PersonaException($e);
+        }
+    }
+
+    /**
+     * @param string $instance
+     * @param array $params
+     * @return mixed
+     * @throws PersonaException
+     */
+    public function get(string $instance, $params = [])
+    {
+        try {
+            if (isset(self::$singletonObject[$instance])) {
+                return self::$singletonObject[$instance];
+            }
+
+            $persona = new Injection;
+            $reflection = $persona->getReflectionClass($instance, self::getInterfaceList());
+
+            $obj = $persona->newInstance($reflection, self::getInterfaceList($params));
+
+            if (isset(self::$singletonList[$instance])) {
+                self::$singletonObject[$instance] = $obj;
+
+                return self::$singletonObject[$instance];
+            }
+
+            return $obj;
+        } catch (\Exception $e) {
+            throw new PersonaException($e);
+        }
+    }
+
+    /**
+     * @param string $interface
+     * @param $instance
+     * @param bool $singleton
+     */
+    public static function bind(string $interface, $instance, bool $singleton = false): void
+    {
+        if ($singleton) {
+            self::$singletonList[$interface] = $instance;
+            return;
+        }
+
         self::$bindList[$interface] = $instance;
     }
 
     /**
-     * @param $interface
-     * @param $instance
-     */
-    public static function singleton($interface, $instance): void
-    {
-        self::$singletonList[$interface] = $instance;
-    }
-
-    /**
+     * @param array $params
      * @return array
      */
-    public static function getBindList(): array
+    private static function getInterfaceList(array $params = [])
     {
-        return self::$bindList;
-    }
-
-    /**
-     * @return array
-     */
-    public static function getSingletonList(): array
-    {
-        return self::$singletonList;
-    }
-
-    /**
-     * @param $instance
-     * @return mixed
-     * @throws \ReflectionException
-     */
-    public static function make($instance)
-    {
-        if (isset(self::$singletonObject[$instance])) {
-            return self::$singletonObject[$instance];
-        }
-
-        $persona = new Injection;
-        $reflection = $persona->getReflectionClass($instance, self::getInterfaceList());
-
-        $obj = $persona->newInstance($reflection, self::getInterfaceList());
-
-        if (isset(self::$singletonList[$instance])) {
-            self::$singletonObject[$instance] = $obj;
-
-            return self::$singletonObject[$instance];
-        }
-
-        return $obj;
-    }
-
-    /**
-     * @param $method
-     * @param $instance
-     * @param $option
-     * @return mixed|null
-     * @throws \ReflectionException
-     */
-    public static function call($method, $instance, $option)
-    {
-        $obj = self::make($instance);
-        $persona = new Injection;
-        return $persona->invoke($method, $obj, self::getInterfaceList($option));
-    }
-
-    /**
-     * @param array $option
-     * @return array
-     */
-    private static function getInterfaceList(array $option = [])
-    {
-        return array_merge(self::$bindList, self::$singletonList, $option);
+        return array_merge(self::$bindList, self::$singletonList, self::$closureList, $params);
     }
 }

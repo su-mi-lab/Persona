@@ -5,7 +5,7 @@ class Order
     /**
      * @var int
      */
-    public $order_id = 1;
+    public $order_id;
 
     /**
      * @var Item
@@ -21,14 +21,17 @@ class Order
      * Order constructor.
      * @param User $user
      * @param Item $item
+     * @param int $order_id
      */
     public function __construct(
         User $user,
-        Item $item
+        Item $item,
+        int $order_id
     )
     {
         $this->user = $user;
         $this->item = $item;
+        $this->order_id = $order_id;
     }
 
     /**
@@ -46,4 +49,5 @@ class Order
     {
         return $this->item;
     }
+
 }
