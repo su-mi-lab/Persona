@@ -2,7 +2,7 @@
 
 namespace Persona;
 
-class Persona
+class Container
 {
     /**
      * @var array
@@ -23,7 +23,7 @@ class Persona
      * @param $interface
      * @param $instance
      */
-    public static function bind($interface, $instance)
+    public static function bind($interface, $instance): void
     {
         self::$bindList[$interface] = $instance;
     }
@@ -32,7 +32,7 @@ class Persona
      * @param $interface
      * @param $instance
      */
-    public static function singleton($interface, $instance)
+    public static function singleton($interface, $instance): void
     {
         self::$singletonList[$interface] = $instance;
     }
@@ -40,7 +40,7 @@ class Persona
     /**
      * @return array
      */
-    public static function getBindList()
+    public static function getBindList(): array
     {
         return self::$bindList;
     }
@@ -48,14 +48,15 @@ class Persona
     /**
      * @return array
      */
-    public static function getSingletonList()
+    public static function getSingletonList(): array
     {
         return self::$singletonList;
     }
 
     /**
      * @param $instance
-     * @return object
+     * @return mixed
+     * @throws \ReflectionException
      */
     public static function make($instance)
     {
@@ -63,7 +64,7 @@ class Persona
             return self::$singletonObject[$instance];
         }
 
-        $persona = new PersonaReflection;
+        $persona = new Injection;
         $reflection = $persona->getReflectionClass($instance, self::getInterfaceList());
 
         $obj = $persona->newInstance($reflection, self::getInterfaceList());
@@ -81,12 +82,13 @@ class Persona
      * @param $method
      * @param $instance
      * @param $option
-     * @return mixed
+     * @return mixed|null
+     * @throws \ReflectionException
      */
     public static function call($method, $instance, $option)
     {
         $obj = self::make($instance);
-        $persona = new PersonaReflection;
+        $persona = new Injection;
         return $persona->invoke($method, $obj, self::getInterfaceList($option));
     }
 

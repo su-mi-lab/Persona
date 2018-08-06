@@ -2,12 +2,12 @@
 
 namespace Persona;
 
-class PersonaReflection
+class Injection
 {
     /**
      * @param \ReflectionClass $reflection
      * @param $interfaceList
-     * @return object
+     * @return mixed
      */
     public function newInstance(\ReflectionClass $reflection, $interfaceList)
     {
@@ -22,9 +22,10 @@ class PersonaReflection
 
     /**
      * @param $method
-     * @param object $interface
+     * @param $interface
      * @param array $options
-     * @return mixed
+     * @return mixed|null
+     * @throws \ReflectionException
      */
     public function invoke($method, $interface, array $options)
     {
@@ -44,6 +45,7 @@ class PersonaReflection
      * @param $interface
      * @param array $interfaceList
      * @return \ReflectionClass
+     * @throws \ReflectionException
      */
     public function getReflectionClass($interface, array $interfaceList)
     {
@@ -78,7 +80,8 @@ class PersonaReflection
     /**
      * @param \ReflectionClass $reflection
      * @param array $args
-     * @return object
+     * @return mixed
+     * @throws \ReflectionException
      */
     private function getArgumentObject(\ReflectionClass $reflection, array $args)
     {

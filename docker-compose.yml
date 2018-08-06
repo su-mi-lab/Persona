@@ -1,0 +1,11 @@
+version: '3'
+services:
+  php: &defaults
+    image: sumimaru/deer
+    working_dir: /var/opt/app
+    volumes:
+      - .:/var/opt/app
+    entrypoint: ["php"]
+  composer:
+    <<: *defaults
+    entrypoint: ["composer"]

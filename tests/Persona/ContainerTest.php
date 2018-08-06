@@ -1,41 +1,48 @@
 <?php
 
-use Persona\Persona;
+use Persona\Container;
+use PHPUnit\Framework\TestCase;
 
-class PersonaTest extends PHPUnit_Framework_TestCase
+class ContainerTest extends TestCase
 {
     public function setUp()
     {
         parent::setUp();
-        Persona::bind(ServiceInterface::class, Service::class);
-        Persona::bind(RepositoryInterface::class, Repository::class);
-        Persona::singleton(Singleton::class, Singleton::class);
+        Container::bind(ServiceInterface::class, Service::class);
+        Container::bind(RepositoryInterface::class, Repository::class);
+        Container::singleton(Singleton::class, Singleton::class);
     }
 
     public function testGetBindList()
     {
-        $list = Persona::getBindList();
+        $list = Container::getBindList();
         $this->assertEquals(count($list), 2);
     }
 
     public function testGetSingletonList()
     {
-        $list = Persona::getSingletonList();
+        $list = Container::getSingletonList();
         $this->assertEquals(count($list), 1);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testMake()
     {
         /** @var Service $serviceInterface */
-        $serviceInterface = Persona::make(ServiceInterface::class);
+        $serviceInterface = Container::make(ServiceInterface::class);
         $this->assertEquals($serviceInterface instanceof Service, true);
         $this->assertEquals($serviceInterface->get(1) instanceof Order, true);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testCall()
     {
         /** @var Order $order */
-        $order = Persona::call('indexAction', Controller::class, [
+        $order = Container::call('indexAction', Controller::class, [
             'order_id' => 1
         ]);
 
@@ -49,17 +56,20 @@ class PersonaTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($job->job, 'PG');
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testSingleton()
     {
         /** @var Singleton $singleton */
-        $singleton = Persona::make(Singleton::class);
+        $singleton = Container::make(Singleton::class);
 
         $this->assertEquals($singleton->getCount(), 0);
 
         $singleton->countUp();
 
         /** @var Singleton $singleton */
-        $singleton2 = Persona::make(Singleton::class);
+        $singleton2 = Container::make(Singleton::class);
 
         $this->assertEquals($singleton2->getCount(), 1);
     }

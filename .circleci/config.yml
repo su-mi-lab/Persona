@@ -1,0 +1,10 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/var/opt/app
+    docker:
+      - image: sumimaru/deer
+    steps:
+      - checkout
+      - run: composer install
+      - run: php vendor/bin/phpunit
