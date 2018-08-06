@@ -8,6 +8,6 @@ class Repository implements RepositoryInterface
      */
     public function get($order_id)
     {
-        return new Order(new User(new UserJob()), new Item());
+        return new Order(new User(new UserJob()), new Item(), $order_id);
     }
 }

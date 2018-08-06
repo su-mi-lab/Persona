@@ -1,12 +1,13 @@
 <?php
 
-use Persona\PersonaReflection;
+use Persona\Injection;
+use PHPUnit\Framework\TestCase;
 
-class PersonaReflectionTest extends PHPUnit_Framework_TestCase
+class InjectionTest extends TestCase
 {
     public function testNewInstance()
     {
-        $persona = new PersonaReflection;
+        $persona = new Injection;
 
         $instance = $persona->newInstance(new \ReflectionClass(Service::class), [
             RepositoryInterface::class => Repository::class
@@ -15,21 +16,27 @@ class PersonaReflectionTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($instance instanceof Service, true);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testInvoke()
     {
         $controller = new Controller;
 
-        $persona = new PersonaReflection;
+        $persona = new Injection;
         $id = $persona->invoke('test', $controller, [
             'id' => 4
         ]);
-        
+
         $this->assertEquals($id, 4);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testGetReflectionClass()
     {
-        $persona = new PersonaReflection;
+        $persona = new Injection;
 
         $reflection = $persona->getReflectionClass(RepositoryInterface::class, [
             RepositoryInterface::class => Repository::class
